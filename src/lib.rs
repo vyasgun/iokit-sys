@@ -22,6 +22,7 @@ pub use usb::*;
 pub use io_hid_keys::*;
 pub use io_hid_base::*;
 pub use io_hid_manager::*;
+pub use io_message::*;
 
 mod io_return;
 mod keys;
@@ -31,6 +32,7 @@ mod usb;
 mod io_hid_keys;
 mod io_hid_base;
 mod io_hid_manager;
+mod io_message;
 
 // exports from <IOKit/IOKitLib.h>
 
@@ -64,6 +66,7 @@ extern "C" {
     pub fn IONotificationPortCreate(masterPort: mach_port_t) -> IONotificationPortRef;
     pub fn IONotificationPortDestroy(notify: IONotificationPortRef);
     pub fn IONotificationPortGetMachPort(notify: IONotificationPortRef) -> mach_port_t;
+    pub fn IONotificationPortGetRunLoopSource(notify: IONotificationPortRef) -> *mut c_void;
 
     pub fn IOCreateReceivePort(msgType: u32, recvPort: *mut mach_port_t) -> kern_return_t;
 
@@ -168,4 +171,10 @@ extern "C" {
     pub fn IOServiceNameMatching(name: *const c_char) -> CFMutableDictionaryRef;
     pub fn IOBSDNameMatching(masterPort: mach_port_t, options: u32, bsdName: *const c_char) -> CFMutableDictionaryRef;
     pub fn IORegistryEntryIDMatching(entryID: u64) -> CFMutableDictionaryRef;
+
+    // IO System Power Notifications
+    pub fn IOAllowPowerChange(kernelPort: io_connect_t, notification_id: isize) -> kern_return_t;
+    pub fn IOCancelPowerChange(kernel_port: io_connect_t, notification_id: isize) -> kern_return_t;
+    pub fn IORegisterForSystemPower(refcon: *mut c_void, port: *mut IONotificationPortRef, callback: IOServiceInterestCallback, notifier: *mut io_object_t) -> kern_return_t;
+    pub fn IODeregisterForSystemPower(notifier: *mut io_object_t) -> kern_return_t;
 }
