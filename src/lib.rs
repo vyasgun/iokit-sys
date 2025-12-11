@@ -1,10 +1,12 @@
 #![allow(non_camel_case_types,non_upper_case_globals,non_snake_case)]
 
-extern crate CoreFoundation_sys as cf;
+extern crate core_foundation as cf;
 extern crate libc;
 extern crate mach;
 
-use cf::{CFTypeRef,CFDictionaryRef,CFMutableDictionaryRef,CFStringRef,CFAllocatorRef};
+use cf::base::{CFTypeRef,CFAllocatorRef};
+use cf::dictionary::{CFDictionaryRef,CFMutableDictionaryRef};
+use cf::string::CFStringRef;
 use libc::{c_void,c_char,c_int,size_t,uintptr_t};
 
 use mach::boolean::boolean_t;
@@ -43,8 +45,8 @@ pub struct IONotificationPort {
 
 pub type IONotificationPortRef = *mut IONotificationPort;
 
-pub type IOServiceMatchingCallback = extern fn (refcon: *mut c_void, iterator: io_iterator_t);
-pub type IOServiceInterestCallback = extern fn (refcon: *mut c_void, service: io_service_t, messageType: u32, messageArgument: *mut c_void);
+pub type IOServiceMatchingCallback = extern "C" fn (refcon: *mut c_void, iterator: io_iterator_t);
+pub type IOServiceInterestCallback = extern "C" fn (refcon: *mut c_void, service: io_service_t, messageType: u32, messageArgument: *mut c_void);
 
 // options for IOServiceAuthorize()
 pub const kIOServiceInteractionAllowed: u32 = 0x00000001;
@@ -53,10 +55,10 @@ pub const kIOServiceInteractionAllowed: u32 = 0x00000001;
 pub const kIORegistryIterateRecursively: IOOptionBits = 0x00000001;
 pub const kIORegistryIterateParents:     IOOptionBits = 0x00000002;
 
-pub type IOAsyncCallback0 = extern fn (refcon: *mut c_void, result: IOReturn);
-pub type IOAsyncCallback1 = extern fn (refcon: *mut c_void, result: IOReturn, arg0: *mut c_void);
-pub type IOAsyncCallback2 = extern fn (refcon: *mut c_void, result: IOReturn, arg0: *mut c_void, arg1: *mut c_void);
-pub type IOAsyncCallback = extern fn (refcon: *mut c_void, result: IOReturn, args: *mut *mut c_void, numArgs: u32);
+pub type IOAsyncCallback0 = extern "C" fn (refcon: *mut c_void, result: IOReturn);
+pub type IOAsyncCallback1 = extern "C" fn (refcon: *mut c_void, result: IOReturn, arg0: *mut c_void);
+pub type IOAsyncCallback2 = extern "C" fn (refcon: *mut c_void, result: IOReturn, arg0: *mut c_void, arg1: *mut c_void);
+pub type IOAsyncCallback = extern "C" fn (refcon: *mut c_void, result: IOReturn, args: *mut *mut c_void, numArgs: u32);
 
 extern "C" {
     pub static kIOMasterPortDefault: mach_port_t;
